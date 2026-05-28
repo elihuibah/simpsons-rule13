@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Simpson 1/3</title>
+    <link rel="stylesheet" href="/CSS/simpson.css">
+</head>
+<body>
+
+    <div class="calculator-card">
+        <header>
+            <h1>Simpson 1/3</h1>
+            <p>Interpolación y Cuadratura Numérica</p>
+        </header>
+
+        <div class="form-container">
+            <div class="input-field">
+                <label for="funcion">Función f(x)</label>
+                <input type="text" id="funcion" placeholder="Ej: x^3 + 2x - 5">
+            </div>
+
+            <div class="row">
+                <div class="input-field">
+                    <label for="limite-a">Límite inferior (a)</label>
+                    <input type="number" id="limite-a" placeholder="0">
+                </div>
+                <div class="input-field">
+                    <label for="limite-b">Límite superior (b)</label>
+                    <input type="number" id="limite-b" placeholder="1">
+                </div>
+            </div>
+
+            <div class="input-field">
+                <label for="n-intervalos">Intervalos (n - debe ser par)</label>
+                <input type="number" id="n-intervalos" placeholder="2, 4, 6, ...">
+            </div>
+
+            <button id="btn-calcular">Procesar Integral</button>
+        </div>
+
+        <div id="results-area" class="results-hidden">
+            <div class="result-box">
+                <small>Resultado Simpson</small>
+                <span id="res-val">0.0000</span>
+            </div>
+            <div class="result-box">
+                <small>Valor Real (Analítico)</small>
+                <span id="res-real">0.0000</span>
+            </div>
+            <div class="result-box error">
+                <small>Error Relativo</small>
+                <span id="res-error">0.00%</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/simpson.js"></script>
+</body>
+</html>
