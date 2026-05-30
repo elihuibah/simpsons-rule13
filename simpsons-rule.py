@@ -1,2 +1,72 @@
 import math
 import numpy as np
+import time
+
+def simpson_rule_simple(f, a, b):
+    if a == b:
+        return 0.0 # El área de un punto es cero
+
+    fx0 = f(a) # Función evaluada en el límite inferior de la integral definida
+    fx1 = f((a + b) / 2) # Función evaluada en un valor intermedio (resta del lím. superior con el lím. inferior de la integral definida entre 2)
+    fx2 = f(b) # Función evaluada en el límite superior de la integral definida
+
+    resultado = (b - a) * ((fx0 + (4 * fx1) + fx2) / 6) # Fórmula de Regla de Simpson 1/3 simple
+    return resultado
+
+def simpson_rule_compuesta(f, a, b, n):
+    if n <= 0:
+        raise ValueError("El número de intervalos n debe ser un entero positivo mayor a cero.")
+
+    if(n % 2 != 0): # n debe ser par obligatoriamente
+        raise ValueError("Error: El número de intervalos n no es par. Favor de intentarlo de nuevo.")
+    
+    if a > b:
+        raise ValueError("El límite inferior 'a' no puede ser mayor que el límite superior 'b'.")
+    
+    if a == b:
+        return 0.0 # El área de un punto es cero
+
+    # Inicializacion
+    delta_x = (b - a) / n    
+    resultado = 0.0
+
+    for i in range(0, n + 1):
+        xn = a + (i * delta_x) # Cálculo de xn, donde xn = xn-1 + delta de x. En esta línea, la fórmula se adapta con la suma de a con el producto de i por delta de x
+
+        if(i == 0 or i == n): # Si se tiene xn = x0 o xn (donde n es el valor de intervalos delimitados), al resultado se suma la funcion evaluada en xn
+            resultado += f(xn)
+        elif (i % 2 != 0): # Si i es impar, al resultado se suma la funcion evaluada en xn multiplicada por 4
+            resultado += 4 * f(xn)
+        else:
+            resultado += 2 * f(xn) # Si i es par, al resultado se suma la funcion evaluada en xn multiplicada por 2
+
+    resultado *= (delta_x / 3) # El resultado final es la suma de todo lo anterior multiplicado por delta de x entre 3
+    return resultado
+
+# Se define la funcion y parametros
+funcion = lambda x: -(x**2) + 8*x - 12.0
+a = 3
+b = 5
+n = 2
+
+inicio_s = time.perf_counter()
+resultado_s = simpson_rule_simple(funcion, a, b)
+final_s = time.perf_counter()
+
+inicio_c = time.perf_counter()
+resultado_c = simpson_rule_compuesta(funcion, a, b, n)
+final_c = time.perf_counter()
+
+if resultado_s is not None:
+    print(f"Resultado de la Regla de Simpson 1/3 (simple): {resultado_s:.6f}")
+    print(f"Tiempo: {(final_s - inicio_s):.6f}")
+    print("-"*50)
+else:
+    print("No se halló resultado.")
+
+if resultado_c is not None:
+    print(f"Resultado de la Regla de Simspon 1/3 (compuesto): {resultado_c:.6f}")
+    print(f"Tiempo: {(final_c - inicio_c):.6f}")
+    print("-"*50)
+else:
+    print("No se halló resultado.")
