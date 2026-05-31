@@ -1,6 +1,12 @@
-import math
 import numpy as np
-import time
+
+def funcion_segura(expresion):
+    expresion = expresion.replace('^', '**')
+    diccionario = {
+        "np": np, "sin": np.sin, "cos": np.cos, "tan": np.tan, "exp": np.exp,
+        "log": np.log, "sqrt": np.sqrt, "pi": np.pi, "e": np.e
+    }
+    return lambda x_val: eval(expresion, {"__builtins__": None}, {**diccionario, "x": x_val})
 
 def simpson_rule_simple(f, a, b):
     if a == b:
@@ -42,31 +48,3 @@ def simpson_rule_compuesta(f, a, b, n):
 
     resultado *= (delta_x / 3) # El resultado final es la suma de todo lo anterior multiplicado por delta de x entre 3
     return resultado
-
-# Se define la funcion y parametros
-funcion = lambda x: -(x**2) + 8*x - 12.0
-a = 3
-b = 5
-n = 2
-
-inicio_s = time.perf_counter()
-resultado_s = simpson_rule_simple(funcion, a, b)
-final_s = time.perf_counter()
-
-inicio_c = time.perf_counter()
-resultado_c = simpson_rule_compuesta(funcion, a, b, n)
-final_c = time.perf_counter()
-
-if resultado_s is not None:
-    print(f"Resultado de la Regla de Simpson 1/3 (simple): {resultado_s:.6f}")
-    print(f"Tiempo: {(final_s - inicio_s):.6f}")
-    print("-"*50)
-else:
-    print("No se halló resultado.")
-
-if resultado_c is not None:
-    print(f"Resultado de la Regla de Simspon 1/3 (compuesto): {resultado_c:.6f}")
-    print(f"Tiempo: {(final_c - inicio_c):.6f}")
-    print("-"*50)
-else:
-    print("No se halló resultado.")
