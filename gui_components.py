@@ -20,6 +20,7 @@ class SimpsonRule13App(ctk.CTk):
         self.font_normal = ("Raleway", 12)
         self.font_mono = ("Consolas", 13, "bold")
 
+        # Panel Izquierdo: Formulario
         self.frame_form = ctk.CTkFrame(self, width=340, fg_color="#ffffff", corner_radius=15)
         self.frame_form.pack(side="left", fill="y", padx=20, pady=20)
 
@@ -27,7 +28,7 @@ class SimpsonRule13App(ctk.CTk):
         ctk.CTkLabel(self.frame_form, text="Comparativa con Gráficas", font=self.font_subtitulo, text_color="#78a39c").pack(pady=(0, 15))
         ctk.CTkLabel(self.frame_form, text="Elaborado por Elihú Ibarra, Bryan Jeronimo y Alejandro Segovia", font=self.font_normal, text_color="#6a7b78").pack(pady=(0, 15))
 
-        self.entry_funcion = self.crear_input("Funcion f(x)", "Ej: x**3 + 2*x - 5")
+        self.entry_funcion = self.crear_input("Funcion f(x)", "Ej: x**3 + 2*x - 5 (usa operadores de Python)")
 
         frame_limites = ctk.CTkFrame(self.frame_form, fg_color="transparent")
         frame_limites.pack(fill="x", padx=20, pady=(0, 10))
@@ -59,6 +60,7 @@ class SimpsonRule13App(ctk.CTk):
         self.btn_calcular.pack(fill="x", padx=20, pady=(10, 15))
 
         #Tarjetas de error y resultados
+
         # Tarjeta de error
         self.frame_error = ctk.CTkFrame(self.frame_form, fg_color="#fef2f2", border_color="#fecaca", border_width=1, corner_radius=8)
         self.lbl_error_texto = ctk.CTkLabel(self.frame_error, text="", text_color="#831919", font=self.font_label, wraplength=260)
@@ -80,7 +82,7 @@ class SimpsonRule13App(ctk.CTk):
         self.lbl_tiempo_compuesta = ctk.CTkLabel(self.frame_resultado_compuesta, text="Tiempo: ---", font=self.font_normal, text_color="#235134")
         self.lbl_tiempo_compuesta.pack(anchor="w", padx=15, pady=(0, 10))
 
-        # Resultados de Gráfica 
+        # Panel Derecho: Resultados de Gráfica 
         self.frame_grafica = ctk.CTkFrame(self, fg_color="#eef2f6")
         self.frame_grafica.pack(side="right", fill="both", expand=True, padx=(0, 20), pady=20)
 
@@ -102,6 +104,7 @@ class SimpsonRule13App(ctk.CTk):
         self.frame_resultado_compuesta.pack_forget()
 
     def mostrar_error(self, mensaje):
+        # Muestra una tarjeta con mensaje de error que corresponda al caso.
         self.ocultar_tarjetas()
         self.lbl_error_texto.configure(text=f"ADVERTENCIA: {mensaje}")
         self.frame_error.pack(fill="x", padx=20, pady=5)
@@ -150,12 +153,12 @@ class SimpsonRule13App(ctk.CTk):
                 return
 
             if n <= 0:
-                self.mostrar_error("El valor de 'n' no puede ser negativo.")
+                self.mostrar_error("El valor de 'n' no puede ser negativo o igual a cero.")
                 return
             if n % 2 != 0:
                 self.mostrar_error("El valor de 'n' debe ser un número par.")
                 return
-            if n > 1000:
+            if n > 1000: # Límite para el valor de n para evitar overflow de memoria. Al tenerse un orden O(h^4), un valor de n superior a 1000 resulta redundante
                 self.mostrar_error("Valor de 'n' demasiado alto (Límite: 1000). Debido a la rapidez de convergencia O(h^4) del método, un valor mayor es redundante y puede saturar la gráfica.")
                 return
         
