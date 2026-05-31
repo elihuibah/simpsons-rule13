@@ -1,10 +1,31 @@
 import numpy as np
 
 def funcion_segura(expresion):
+    # Conversión del string (input) del usuario en una función evaluable, aislando el entorno virtual
     expresion = expresion.replace('^', '**')
     diccionario = {
-        "np": np, "sin": np.sin, "cos": np.cos, "tan": np.tan, "exp": np.exp,
-        "log": np.log, "sqrt": np.sqrt, "pi": np.pi, "e": np.e
+        "np": np,
+
+        # Identidades Trigonométricas
+        "sin": np.sin, "cos": np.cos, "tan": np.tan,
+
+        # Identidades Trigonométricas Inversas
+        "arcsin": np.arcsin, "arcos": np.arccos, "arctan": np.arctan,
+
+        # Identidades Trigonométricas Hiperbólicas
+        "sinh": np.sinh, "cosh": np.cosh, "tanh": np.tanh,
+
+        # Exponenciales y logaritmos
+        "exp": np.exp, "log": np.log, "log10": np.log10, "log2": np.log2,
+
+        # Raíces
+        "sqrt": np.sqrt, "cbrt": np.cbrt,
+
+        # Constantes
+        "pi": np.pi, "e": np.e,
+
+        # abs
+        "abs": np.abs
     }
     return lambda x_val: eval(expresion, {"__builtins__": None}, {**diccionario, "x": x_val})
 
