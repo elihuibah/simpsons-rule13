@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import time
 
 from numerical_engine import simpson_rule_simple, simpson_rule_compuesta, funcion_segura
@@ -89,6 +89,11 @@ class SimpsonRule13App(ctk.CTk):
         self.fig = plt.figure(figsize=(6, 5), dpi=100)
         self.fig.patch.set_facecolor("#eef2f6")
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame_grafica)
+
+        # Navegación de herramientas
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self.frame_grafica)
+        self.toolbar.update()
+        self.toolbar.config(background="#eef2f6")
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
 
     def crear_input(self, titulo, placeholder):
