@@ -2,7 +2,8 @@ import customtkinter as ctk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-import time
+from numerical_engine import simpson_rule_simple, simpson_rule_compuesta, funcion_segura
+import timeit
 
 from numerical_engine import simpson_rule_simple, simpson_rule_compuesta, funcion_segura
 
@@ -58,8 +59,6 @@ class SimpsonRule13App(ctk.CTk):
         # Botón
         self.btn_calcular = ctk.CTkButton(self.frame_form, text="Calcular Integral", font=("Raleway", 14, "bold"), fg_color="#21917b", hover_color="#78a39c", height=50, command=self.ejecutar)
         self.btn_calcular.pack(fill="x", padx=20, pady=(10, 15))
-
-        #Tarjetas de error y resultados
 
         # Tarjeta de error
         self.frame_error = ctk.CTkFrame(self.frame_form, fg_color="#fef2f2", border_color="#fecaca", border_width=1, corner_radius=8)
@@ -143,7 +142,10 @@ class SimpsonRule13App(ctk.CTk):
         except ValueError:
             self.mostrar_error("Los límites 'a' y 'b' deben ser valores numéricos.")
             return
-
+        if a >= b:
+            self.mostrar_error("El límite inferior 'a' debe ser menor que el superior 'b'.")
+            return
+        
         # 3. Validación de Intervalos (sólo con la versión compuesta)
         n = 0
         if usar_compuesta:
@@ -174,27 +176,29 @@ class SimpsonRule13App(ctk.CTk):
         except Exception as e:
             self.mostrar_error(f"Error matemático en la función. Verifique la sintaxis.")
             return
+    
+        repeticiones = 100 # Num. de reps para obtener promedio con timeit
         
         # Cálculo con el uso de la versión simple
         if usar_simple:
-            inicio = time.perf_counter()
             resultado_version_simple = simpson_rule_simple(funcion_evaluable, a, b)
-            final = time.perf_counter()
-            tiempo_us = (final - inicio)
+            tarea_simple = lambda: simpson_rule_simple(funcion_evaluable, a, b)
+            tiempo_total_s = timeit.timeit(stmt=tarea_simple, number=repeticiones)
+            tiempo_promedio_microsegundos = (tiempo_total_s / repeticiones) * 1_000_000
 
             self.lbl_area_simple.configure(text=f"Área: {resultado_version_simple:.6f} u²")
-            self.lbl_tiempo_simple.configure(text=f"Tiempo: {tiempo_us:.6f} segundos")
+            self.lbl_tiempo_simple.configure(text=f"Tiempo: {tiempo_promedio_microsegundos:.6f} µ segundos")
             self.frame_resultado_simple.pack(fill="x", padx=20, pady=5)
 
             # Cálculo con el uso de la versión compuesta
         if usar_compuesta:
-            inicio = time.perf_counter()
             resultado_version_compuesta = simpson_rule_compuesta(funcion_evaluable, a, b, n)
-            final = time.perf_counter()
-            tiempo_us = (final - inicio)
+            tarea_compuesta = lambda: simpson_rule_compuesta(funcion_evaluable, a, b, n)
+            tiempo_total_s = timeit.timeit(stmt=tarea_compuesta, number=repeticiones)
+            tiempo_promedio_microsegundos = (tiempo_total_s / repeticiones) * 1_000_000
 
             self.lbl_area_compuesta.configure(text=f"Área: {resultado_version_compuesta:.6f} u²")
-            self.lbl_tiempo_compuesta.configure(text=f"Tiempo: {tiempo_us:.6f} segundos")
+            self.lbl_tiempo_compuesta.configure(text=f"Tiempo: {tiempo_promedio_microsegundos:.6f} µ segundos")
             self.frame_resultado_compuesta.pack(fill="x", padx=20, pady=5)
 
             # Invocar la función que dibuja la gráfica
