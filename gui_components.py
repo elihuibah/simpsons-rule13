@@ -90,7 +90,7 @@ class SimpsonRule13App(ctk.CTk):
         self.fig.patch.set_facecolor("#eef2f6")
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame_grafica)
 
-        # Barra de herramientas
+        # Navegación de herramientas
         self.toolbar = NavigationToolbar2Tk(self.canvas, self.frame_grafica)
         self.toolbar.update()
         self.toolbar.config(background="#eef2f6")
