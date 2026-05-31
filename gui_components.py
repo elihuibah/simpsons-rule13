@@ -10,33 +10,40 @@ class SimpsonRule13App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("Calculadora de regla de Simpson 1/3")
-        self.geometry("1000x750")
+        self.title("Calculadora de Regla de Simpson 1/3")
+        self.geometry("1050x750")
         ctk.set_appearance_mode("Light")
 
-        self.frame_form = ctk.CTkFrame(self, width=320, fg_color="#ffffff", corner_radius=15)
+        self.font_titulo = ("Raleway", 24, "bold")
+        self.font_subtitulo = ("Raleway", 14)
+        self.font_label = ("Raleway", 12, "bold")
+        self.font_normal = ("Raleway", 12)
+        self.font_mono = ("Consolas", 13, "bold")
+
+        self.frame_form = ctk.CTkFrame(self, width=340, fg_color="#ffffff", corner_radius=15)
         self.frame_form.pack(side="left", fill="y", padx=20, pady=20)
 
-        ctk.CTkLabel(self.frame_form, text="Regla de Simpson 1/3", font=("Raleway", 24, "bold"), text_color="#21917b").pack(pady=(20, 0))
-        ctk.CTkLabel(self.frame_form, text="Comparativa de Gráficas", font=("Raleway", 14), text_color="#78a39c").pack(pady=(0, 15))
+        ctk.CTkLabel(self.frame_form, text="Regla de Simpson 1/3", font=self.font_titulo, text_color="#21917b").pack(pady=(20, 0))
+        ctk.CTkLabel(self.frame_form, text="Comparativa con Gráficas", font=self.font_subtitulo, text_color="#78a39c").pack(pady=(0, 15))
+        ctk.CTkLabel(self.frame_form, text="Elaborado por Elihú Ibarra, Bryan Jeronimo y Alejandro Segovia", font=self.font_normal, text_color="#6a7b78").pack(pady=(0, 15))
 
         self.entry_funcion = self.crear_input("Funcion f(x)", "Ej: x**3 + 2*x - 5")
 
         frame_limites = ctk.CTkFrame(self.frame_form, fg_color="transparent")
         frame_limites.pack(fill="x", padx=20, pady=(0, 10))
 
-        ctk.CTkLabel(frame_limites, text="Límite Inferior (a)", font=("Raleway", 12, "bold"), text_color="#475569").pack(side="left")
+        ctk.CTkLabel(frame_limites, text="Límite Inferior (a)", font=self.font_label, text_color="#475569").pack(side="left")
         self.entry_a = ctk.CTkEntry(frame_limites, width=80)
         self.entry_a.pack(side="left", padx=(5, 10))
 
-        ctk.CTkLabel(frame_limites, text="Límite Superior (b)", font=("Raleway", 12, "bold"), text_color="#475569").pack(side="left")
+        ctk.CTkLabel(frame_limites, text="Límite Superior (b)", font=self.font_label, text_color="#475569").pack(side="left")
         self.entry_b = ctk.CTkEntry(frame_limites, width=80)
         self.entry_b.pack(side="left", padx=(5, 10))
 
         self.entry_n = self.crear_input("Intervalo (n). Sólo para versión compuesta. n debe ser par.", "Ej: 2, 8, 32...")
 
         # Checkboxes para seleccionar entre la variante simple o compuesta de la regla de Simpson 1/3 (o ambas)
-        ctk.CTkLabel(self.frame_form, text="Métodos a evaluar:", font=("Raleway", 12, "bold"), text_color="#475569").pack(anchor="w", padx=20, pady=(0, 5))
+        ctk.CTkLabel(self.frame_form, text="Métodos a evaluar:", font=self.font_label, text_color="#475569").pack(anchor="w", padx=20, pady=(0, 5))
 
         self.var_simple = ctk.BooleanVar(value=True)
         self.var_compuesta = ctk.BooleanVar(value=True)
@@ -44,21 +51,36 @@ class SimpsonRule13App(ctk.CTk):
         frame_checks = ctk.CTkFrame(self.frame_form, fg_color="transparent")
         frame_checks.pack(fill="x", padx=20, pady=(0, 15))
 
-        ctk.CTkCheckBox(frame_checks, text="Simple", variable=self.var_simple, fg_color="#21917b", text_color="#475569").pack(side="left", padx=(0, 10))
-        ctk.CTkCheckBox(frame_checks, text="Compuesta", variable=self.var_compuesta, fg_color="#21917b", text_color="#475569").pack(side="left")
+        ctk.CTkCheckBox(frame_checks, text="Simple", variable=self.var_simple, font=self.font_normal, fg_color="#21917b", text_color="#475569").pack(side="left", padx=(0, 15))
+        ctk.CTkCheckBox(frame_checks, text="Compuesta", variable=self.var_compuesta, font=self.font_normal, fg_color="#21917b", text_color="#475569").pack(side="left")
 
         # Botón
         self.btn_calcular = ctk.CTkButton(self.frame_form, text="Calcular Integral", font=("Raleway", 14, "bold"), fg_color="#21917b", hover_color="#78a39c", height=50, command=self.ejecutar)
-        self.btn_calcular.pack(fill="x", padx=20, pady=20)
+        self.btn_calcular.pack(fill="x", padx=20, pady=(10, 15))
 
-        # Resultados
-        self.lbl_resultado_simple = ctk.CTkLabel(self.frame_form, text="", font=("monospace", 14), text_color="#21917b", justify="left")
-        self.lbl_resultado_simple.pack(pady=2, padx=10, fill="x")
+        #Tarjetas de error y resultados
+        # Tarjeta de error
+        self.frame_error = ctk.CTkFrame(self.frame_form, fg_color="#fef2f2", border_color="#fecaca", border_width=1, corner_radius=8)
+        self.lbl_error_texto = ctk.CTkLabel(self.frame_error, text="", text_color="#831919", font=self.font_label, wraplength=260)
+        self.lbl_error_texto.pack(pady=10, padx=10)
 
-        self.lbl_resultado_compuesta = ctk.CTkLabel(self.frame_form, text="", font=("monospace", 14), text_color="#21917b", justify="left")
-        self.lbl_resultado_compuesta.pack(pady=2, padx=10, fill="x")
-        
-        # Gráfica
+        # Tarjeta de Resultado de Versión Simple
+        self.frame_resultado_simple = ctk.CTkFrame(self.frame_form, fg_color="#f0fdf4", border_color="#bbf7d0", border_width=1, corner_radius=8)
+        ctk.CTkLabel(self.frame_resultado_simple, text="VERSIÓN SIMPLE", font=self.font_label, text_color="#21917b").pack(anchor="w", padx=15, pady=(10, 0))
+        self.lbl_area_simple = ctk.CTkLabel(self.frame_resultado_simple, text="Área: ---", font=self.font_mono, text_color="#235134")
+        self.lbl_area_simple.pack(anchor="w", padx=15)
+        self.lbl_tiempo_simple = ctk.CTkLabel(self.frame_resultado_simple, text="Tiempo: ---", font=self.font_normal, text_color="#235134")
+        self.lbl_tiempo_simple.pack(anchor="w", padx=15, pady=(0, 10))
+
+        # Tarjeta de Resultado de Versión Compuesta
+        self.frame_resultado_compuesta = ctk.CTkFrame(self.frame_form, fg_color="#f0fdf4", border_color="#bbf7d0", border_width=1, corner_radius=8)
+        ctk.CTkLabel(self.frame_resultado_compuesta, text="VERSIÓN COMPUESTA", font=self.font_label, text_color="#21917b").pack(anchor="w", padx=15, pady=(10, 0))
+        self.lbl_area_compuesta = ctk.CTkLabel(self.frame_resultado_compuesta, text="Área: ---", font=self.font_mono, text_color="#235134")
+        self.lbl_area_compuesta.pack(anchor="w", padx=15)
+        self.lbl_tiempo_compuesta = ctk.CTkLabel(self.frame_resultado_compuesta, text="Tiempo: ---", font=self.font_normal, text_color="#235134")
+        self.lbl_tiempo_compuesta.pack(anchor="w", padx=15, pady=(0, 10))
+
+        # Resultados de Gráfica 
         self.frame_grafica = ctk.CTkFrame(self, fg_color="#eef2f6")
         self.frame_grafica.pack(side="right", fill="both", expand=True, padx=(0, 20), pady=20)
 
@@ -68,64 +90,111 @@ class SimpsonRule13App(ctk.CTk):
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
 
     def crear_input(self, titulo, placeholder):
-        ctk.CTkLabel(self.frame_form, text=titulo, font=("Inter", 12, "bold"), text_color="#475569").pack(anchor="w", padx=20)
-        entry = ctk.CTkEntry(self.frame_form, placeholder_text=placeholder, height=35)
+        ctk.CTkLabel(self.frame_form, text=titulo, font=self.font_label, text_color="#475569").pack(anchor="w", padx=20)
+        entry = ctk.CTkEntry(self.frame_form, placeholder_text=placeholder, height=35, font=self.font_normal)
         entry.pack(fill="x", padx=20, pady=(0,15))
         return entry
     
+    def ocultar_tarjetas(self):
+        # Oculta todas las tarjetas de resultados y errores para limpiar la pantalla
+        self.frame_error.pack_forget()
+        self.frame_resultado_simple.pack_forget()
+        self.frame_resultado_compuesta.pack_forget()
+
+    def mostrar_error(self, mensaje):
+        self.ocultar_tarjetas()
+        self.lbl_error_texto.configure(text=f"ADVERTENCIA: {mensaje}")
+        self.frame_error.pack(fill="x", padx=20, pady=5)
+    
     def ejecutar(self):
         # Limpieza de resultados por cada nueva ejecución
-        self.lbl_resultado_simple.configure(text="")
-        self.lbl_resultado_compuesta.configure(text="")
+        self.ocultar_tarjetas()
+        usar_simple = self.var_simple.get()
+        usar_compuesta = self.var_compuesta.get()
 
+        if not usar_simple and not usar_compuesta:
+            self.mostrar_error("Selecciona al menos un método a evaluar.")
+            return
+        
+        # 1. Validación de la Función
+        func_str = self.entry_funcion.get().strip()
+        if not func_str:
+            self.mostrar_error("La función está vacía. Por favor escribe una ecuación.")
+            return
+
+        # 2. Validación de Límites
+        str_a = self.entry_a.get().strip()
+        str_b = self.entry_b.get().strip()
+
+        if not str_a or not str_b:
+            self.mostrar_error("Los límites no se definieron correctamente. Ingresa el límite inferior y superior.")
+            return
         try:
-            usar_simple = self.var_simple.get()
-            usar_compuesta = self.var_compuesta.get()
+            a = float(str_a)
+            b = float(str_b)
+        except ValueError:
+            self.mostrar_error("Los límites 'a' y 'b' deben ser valores numéricos.")
+            return
 
-            if not usar_simple and not usar_compuesta:
-                raise ValueError("Selecciona al menos un método.")
+        # 3. Validación de Intervalos (sólo con la versión compuesta)
+        n = 0
+        if usar_compuesta:
+            str_n = self.entry_n.get().strip()
+            if not str_n:
+                self.mostrar_error("El valor de intervalos 'n' está vacío. Se requiere para la versión compuesta.")
+                return
+            try:
+                n = int(str_n)
+            except ValueError:
+                self.mostrar_error("El valor de 'n' debe ser un número entero.")
+                return
 
-            func_str = self.entry_funcion.get()
-            a = float(self.entry_a.get())
-            b = float(self.entry_b.get())
-
+            if n <= 0:
+                self.mostrar_error("El valor de 'n' no puede ser negativo.")
+                return
+            if n % 2 != 0:
+                self.mostrar_error("El valor de 'n' debe ser un número par.")
+                return
+            if n > 1000:
+                self.mostrar_error("Valor de 'n' demasiado alto (Límite: 1000). Debido a la rapidez de convergencia O(h^4) del método, un valor mayor es redundante y puede saturar la gráfica.")
+                return
+        
+        # 4. Validar que la función sea matemáticamente correcta
+        try:
             funcion_evaluable = funcion_segura(func_str)
             funcion_evaluable(a)
+        except Exception as e:
+            self.mostrar_error(f"Error matemático en la función. Verifique la sintaxis.")
+            return
+        
+        # Cálculo con el uso de la versión simple
+        if usar_simple:
+            inicio = time.perf_counter()
+            resultado_version_simple = simpson_rule_simple(funcion_evaluable, a, b)
+            final = time.perf_counter()
+            tiempo_us = (final - inicio)
 
-            # Valor predeterminado del número de intervalos para versión compuesta
-            n = 0
-
-            # Cálculo con el uso de la versión simple
-            if usar_simple:
-                inicio = time.perf_counter()
-                resultado_version_simple = simpson_rule_simple(funcion_evaluable, a, b)
-                final = time.perf_counter()
-                tiempo_us = (final - inicio) * 1_000_000 # milisegundos
-
-                texto = f"VERSIÓN SIMPLE:\nÁrea: {resultado_version_simple:.6f} u^2\nTiempo: {tiempo_us:.2f} µ segundos"
-                self.lbl_resultado_simple.configure(text=texto, text_color="#67995d")
+            self.lbl_area_simple.configure(text=f"Área: {resultado_version_simple:.6f} u²")
+            self.lbl_tiempo_simple.configure(text=f"Tiempo: {tiempo_us:.6f} segundos")
+            self.frame_resultado_simple.pack(fill="x", padx=20, pady=5)
 
             # Cálculo con el uso de la versión compuesta
-            if usar_compuesta:
-                try:
-                    n = int(self.entry_n.get())
-                except ValueError:
-                    raise ValueError("Inserta un valor par positivo para 'n' (versión compuesta).")
-                
-                inicio = time.perf_counter()
-                resultado_version_compuesta = simpson_rule_simple(funcion_evaluable, a, b)
-                final = time.perf_counter()
-                tiempo_us = (final - inicio) * 1_000_000 # milisegundos
+        if usar_compuesta:
+            inicio = time.perf_counter()
+            resultado_version_compuesta = simpson_rule_compuesta(funcion_evaluable, a, b, n)
+            final = time.perf_counter()
+            tiempo_us = (final - inicio)
 
-                texto = f"VERSIÓN COMPUESTA:\nÁrea: {resultado_version_compuesta:.6f} u^2\nTiempo: {tiempo_us:.2f} µ segundos"
-                self.lbl_resultado_compuesta.configure(text=texto, text_color="#67995d")
+            self.lbl_area_compuesta.configure(text=f"Área: {resultado_version_compuesta:.6f} u²")
+            self.lbl_tiempo_compuesta.configure(text=f"Tiempo: {tiempo_us:.6f} segundos")
+            self.frame_resultado_compuesta.pack(fill="x", padx=20, pady=5)
 
             # Invocar la función que dibuja la gráfica
+        try:
             self.graficar(funcion_evaluable, a, b, n, usar_simple, usar_compuesta)
-        
         except Exception as e:
-            self.lbl_resultado_simple.configure(text=f"Error: {str(e)}", text_color="#843232")
-    
+            self.mostrar_error(f"Error al graficar: {str(e)}")
+            
     def graficar(self, funcion, a, b, n, usar_simple, usar_compuesta):
         # Limpiar la gráfica por cada nueva ejecución
         self.fig.clf()
